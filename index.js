@@ -1,11 +1,19 @@
-const express = require("express");
-const app = express();
+import dotenv from "dotenv";
+import connectDatabase from "./src/db/index.js";
+import { app } from "./src/app.js";
+
+dotenv.config({
+  path: "./.env",
+});
+
 const port = 3000;
 
-app.get("/", (req, res) => {
-  res.send("Hello Backend Task!");
-});
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+connectDatabase()
+  .then(() => {
+    app.listen(process.env.PORT, () => {
+      console.log(`Server is running at port : ${process.env.PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.log("Mongo db connection failed", err);
+  });
