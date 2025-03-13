@@ -21,11 +21,11 @@ const taskSchema = new Schema(
     },
     due_date: {
       type: String,
-      required: true,
+      required: false,
     },
     completed_at: {
       type: String,
-      required: true,
+      required: false,
     },
   },
   {
