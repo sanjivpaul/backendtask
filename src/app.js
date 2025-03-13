@@ -13,7 +13,7 @@ app.use(cookieParser());
 //   res.send("Hello Backend Task!");
 // });
 
-import userRouter from "./routes/user.routes.js";
+import userRouter from "./routes/user/user.routes.js";
 
 app.use("/auth", userRouter);
 
