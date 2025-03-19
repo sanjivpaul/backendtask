@@ -23,6 +23,8 @@ const generateAccessAndRefreshTokens = async (userId) => {
 const registerUser = async (req, res) => {
   const { fullName, email, username, password } = req.body;
 
+  console.log(fullName, email, username, password);
+
   try {
     if (
       [fullName, email, username, password].some(
