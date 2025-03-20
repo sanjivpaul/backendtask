@@ -115,7 +115,7 @@ const loginUser = async (req, res) => {
     };
 
     return res
-      .status(200)
+      .status(201)
       .cookie("accessToken", accessToken, options)
       .cookie("refreshToken", refreshToken, options)
       .send({

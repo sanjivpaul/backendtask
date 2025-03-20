@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { User } from "../user/user.model.js";
 
 const taskSchema = new Schema(
   {
@@ -26,6 +27,11 @@ const taskSchema = new Schema(
     completed_at: {
       type: String,
       required: false,
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User", // Referring to the User model
+      required: true, // Make sure it's required if each task should be associated with a user
     },
   },
   {

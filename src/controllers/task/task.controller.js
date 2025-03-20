@@ -20,6 +20,7 @@ const createTask = async (req, res) => {
       status,
       priority,
       due_date,
+      user: req.user._id,
     });
 
     if (!task) {
@@ -41,10 +42,23 @@ const createTask = async (req, res) => {
 };
 const getAllTask = async (req, res) => {
   try {
-    const allTask = await Task.find();
+    // const allTask = await Task.find({ user: req.user._id });
+    const allTask = await Task.find({ user: req.user._id }).sort({
+      status: -1,
+      createdAt: -1,
+    });
+
+    // const allTask = await Task.find({ user: req.user._id }).populate("user"); // this will show also user data
+
+    // const allTask = await Task.find({
+    //   user: req.user._id,
+    //   status: "pending",
+    // }).sort({ status: 1 }); // Sorting by status
 
     if (allTask.length === 0) {
-      return res.status(404).json({ message: "No Task found" });
+      return res
+        .status(404)
+        .json({ message: "No Task found, Create New Task!" });
     }
 
     return res.status(201).json({
