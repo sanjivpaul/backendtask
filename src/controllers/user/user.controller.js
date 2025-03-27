@@ -1,4 +1,6 @@
+import { transporter } from "../../middlewares/mail.transporter.js";
 import { User } from "../../models/user/user.model.js";
+import crypto from "crypto";
 
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
@@ -130,4 +132,96 @@ const loginUser = async (req, res) => {
   }
 };
 
-export { registerUser, loginUser };
+const forgetPassword = async (req, res) => {
+  const { email } = req.body;
+  try {
+    if (!email) {
+      return res.status(400).send({
+        message: "Email is required",
+      });
+    }
+
+    const user = await User.findOne({ email: email });
+
+    if (!user) {
+      return res.status(400).send({
+        message: "User does not exist!",
+      });
+    }
+
+    const otp = crypto.randomInt(100000, 999999).toString();
+
+    const mailOptions = {
+      from: "codedevks@gmail.com",
+      to: user.email,
+      subject: "Your OTP Code from [coodersG]",
+      // text: `Your OTP code is ${otp}. It is valid for 10 minutes.`,
+      html: `
+      <html>
+        <body style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4;">
+          <div style="max-width: 600px; margin: auto; background: #ffffff; padding: 20px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <h2 style="color: #333;">Hello, ${user.username}</h2>
+            <p style="color: #555;">
+              Your One-Time Password (OTP) is <strong style="font-size: 24px; color: #007BFF;">${otp}</strong>.
+            </p>
+            <p style="color: #555;">
+              This OTP is valid for the next 10 minutes. Please use it to complete your process.
+            </p>
+            <p style="color: #555;">
+              If you did not request this code, please ignore this email or contact support.
+            </p>
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #e0e0e0;">
+            <footer style="color: #777; font-size: 12px;">
+              <p>Thank you,</p>
+              <p><strong>[coodersG]</strong></p>
+              <p><a href="https://www.coodersg.com" style="color: #007BFF;">Visit our website</a></p>
+            </footer>
+          </div>
+        </body>
+      </html>
+    `,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(201).send({
+      message: `OTP sent to your registered email ${user.email}`,
+      OTP: otp,
+      status: 201,
+    });
+  } catch (error) {
+    console.log("OTP:", error);
+
+    res.status(500).send("Failed to send OTP.");
+  }
+};
+
+const resetPassword = async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  try {
+    if (!email || !newPassword) {
+      return res.status(400).send({
+        message: "Email and new password are required",
+      });
+    }
+
+    const user = await User.findOne({ email: email });
+
+    if (!user) {
+      return res.status(400).send({
+        message: "User does not exist!",
+      });
+    }
+
+    user.password = newPassword;
+    await user.save();
+    res.status(201).send({
+      message: "Password has been successfully updated.",
+    });
+  } catch (error) {
+    res.status(500).send("Failed to reset password.");
+  }
+};
+
+export { registerUser, loginUser, forgetPassword, resetPassword };
