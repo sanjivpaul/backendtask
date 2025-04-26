@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(cookieParser());
 
 // app.get("/", (req, res) => {
-//   res.send("Hello Backend Task!");
+//   res.send("Hello Backend Tas k!");
 // });
 
 import userRouter from "./routes/user/user.routes.js";
