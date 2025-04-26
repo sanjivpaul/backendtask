@@ -21,8 +21,10 @@ app.use(cookieParser());
 
 import userRouter from "./routes/user/user.routes.js";
 import taskRouter from "./routes/task/task.routes.js";
+import movieRouter from "./routes/movie/movie.routes.js";
 
 app.use("/auth", userRouter);
 app.use("/tasks", taskRouter);
+app.use("/api", movieRouter);
 
 export { app };
